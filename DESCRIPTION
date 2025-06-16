@@ -1,10 +1,12 @@
 Package: refbankr
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Title: Downloads Data From Refbank
+Version: 0.0.0.1000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
-License: GPL (>= 3)
+    person("Michael", "Frank", , "mcfrank@stanford.edu", role = c("aut", "cre"))
+Description: Package for downloading data from refbank repository of reference game data. 
+License: GPL (>= 3) + file LICENSE.md
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
+
+
