@@ -4,7 +4,14 @@
 \alias{get_messages}
 \title{Get messages}
 \usage{
-get_messages()
+get_messages(datasets = NULL, max_results = NULL)
+}
+\arguments{
+\item{datasets}{(Optional) Character vector of dataset IDs to include
+(default to all datasets).}
+
+\item{max_results}{(Optional) Max number of records to load for each table (defaults to
+entire table).}
 }
 \description{
 Get messages

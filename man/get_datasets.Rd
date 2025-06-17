@@ -4,7 +4,11 @@
 \alias{get_datasets}
 \title{Get datasets}
 \usage{
-get_datasets()
+get_datasets(max_results = NULL)
+}
+\arguments{
+\item{max_results}{(Optional) Max number of records to load for each table (defaults to
+entire table).}
 }
 \description{
 Get datasets
