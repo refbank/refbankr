@@ -4,9 +4,12 @@
 \alias{get_choices}
 \title{Get choices}
 \usage{
-get_choices(datasets = NULL, max_results = NULL)
+get_choices(version = "current", datasets = NULL, max_results = NULL)
 }
 \arguments{
+\item{version}{(Optional) Version of the dataset to reference (defaults to
+"current"), can also be "next" for unreleased versions.}
+
 \item{datasets}{(Optional) Character vector of dataset IDs to include
 (default to all datasets).}
 

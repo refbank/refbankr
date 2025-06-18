@@ -4,9 +4,12 @@
 \alias{get_datasets}
 \title{Get datasets}
 \usage{
-get_datasets(max_results = NULL)
+get_datasets(version = "current", max_results = NULL)
 }
 \arguments{
+\item{version}{(Optional) Version of the dataset to reference (defaults to
+"current"), can also be "next" for unreleased versions.}
+
 \item{max_results}{(Optional) Max number of records to load for each table (defaults to
 entire table).}
 }

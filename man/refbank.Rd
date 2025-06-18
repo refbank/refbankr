@@ -4,7 +4,11 @@
 \alias{refbank}
 \title{Reference to Refbank Redivis dataset}
 \usage{
-refbank()
+refbank(version)
+}
+\arguments{
+\item{version}{(Optional) Version of the dataset to reference (defaults to
+"current"), can also be "next" for unreleased versions.}
 }
 \description{
 Reference to Refbank Redivis dataset

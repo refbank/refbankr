@@ -4,9 +4,12 @@
 \alias{get_conditions}
 \title{Get conditions}
 \usage{
-get_conditions(datasets = NULL, max_results = NULL)
+get_conditions(version = "current", datasets = NULL, max_results = NULL)
 }
 \arguments{
+\item{version}{(Optional) Version of the dataset to reference (defaults to
+"current"), can also be "next" for unreleased versions.}
+
 \item{datasets}{(Optional) Character vector of dataset IDs to include
 (default to all datasets).}
 

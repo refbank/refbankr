@@ -4,9 +4,12 @@
 \alias{get_trials}
 \title{Get trials}
 \usage{
-get_trials(datasets = NULL, max_results = NULL)
+get_trials(version = "current", datasets = NULL, max_results = NULL)
 }
 \arguments{
+\item{version}{(Optional) Version of the dataset to reference (defaults to
+"current"), can also be "next" for unreleased versions.}
+
 \item{datasets}{(Optional) Character vector of dataset IDs to include
 (default to all datasets).}
 

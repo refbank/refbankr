@@ -1,7 +1,13 @@
 #' Reference to Refbank Redivis dataset
 #'
+#' @param version (Optional) Version of the dataset to reference (defaults to
+#'   "current"), can also be "next" for unreleased versions.
+#'
 #' @export
-refbank <- function() redivis::redivis$user("mcfrank")$dataset("refbank")
+refbank <- function(version) {
+  message(glue::glue("Using Refbank dataset version: {version}"))
+  redivis::redivis$user("mcfrank")$dataset("refbank", version = version)
+}
 
 # run query on dataset and retrieve results
 get_dataset_query <- function(dataset, query_str, max_results) {
@@ -28,12 +34,13 @@ build_dataset_query <- function(table_name, datasets, max_results) {
 
 #' Get datasets
 #'
+#' @inheritParams refbank
 #' @param max_results (Optional) Max number of records to load for each table (defaults to
 #'   entire table).
 #'
 #' @export
-get_datasets <- function(max_results = NULL) {
-  get_dataset_table(refbank(), "datasets", max_results)
+get_datasets <- function(version = "current", max_results = NULL) {
+  get_dataset_table(refbank(version), "datasets:q7yy", max_results)
 }
 
 #' Get messages
@@ -43,9 +50,9 @@ get_datasets <- function(max_results = NULL) {
 #'   (default to all datasets).
 #'
 #' @export
-get_messages <- function(datasets = NULL, max_results = NULL) {
-  query_str <- build_dataset_query("messages", datasets, max_results)
-  get_dataset_query(refbank(), query_str, max_results)
+get_messages <- function(version = "current", datasets = NULL, max_results = NULL) {
+  query_str <- build_dataset_query("messages:2q18", datasets, max_results)
+  get_dataset_query(refbank(version), query_str, max_results)
 }
 
 #' Get trials
@@ -53,9 +60,9 @@ get_messages <- function(datasets = NULL, max_results = NULL) {
 #' @inheritParams get_messages
 #'
 #' @export
-get_trials <- function(datasets = NULL, max_results = NULL) {
-  query_str <- build_dataset_query("trials", datasets, max_results)
-  get_dataset_query(refbank(), query_str, max_results)
+get_trials <- function(version = "current", datasets = NULL, max_results = NULL) {
+  query_str <- build_dataset_query("trials:zkj2", datasets, max_results)
+  get_dataset_query(refbank(version), query_str, max_results)
 }
 
 #' Get choices
@@ -63,9 +70,9 @@ get_trials <- function(datasets = NULL, max_results = NULL) {
 #' @inheritParams get_messages
 #'
 #' @export
-get_choices <- function(datasets = NULL, max_results = NULL) {
-  query_str <- build_dataset_query("choices", datasets, max_results)
-  get_dataset_query(refbank(), query_str, max_results)
+get_choices <- function(version = "current", datasets = NULL, max_results = NULL) {
+  query_str <- build_dataset_query("choices:s1zj", datasets, max_results)
+  get_dataset_query(refbank(version), query_str, max_results)
 }
 
 #' Get conditions
@@ -73,7 +80,7 @@ get_choices <- function(datasets = NULL, max_results = NULL) {
 #' @inheritParams get_messages
 #'
 #' @export
-get_conditions <- function(datasets = NULL, max_results = NULL) {
-  query_str <- build_dataset_query("conditions", datasets, max_results)
-  get_dataset_query(refbank(), query_str, max_results)
+get_conditions <- function(version = "current", datasets = NULL, max_results = NULL) {
+  query_str <- build_dataset_query("conditions:kk1e", datasets, max_results)
+  get_dataset_query(refbank(version), query_str, max_results)
 }
