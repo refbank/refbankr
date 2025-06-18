@@ -67,3 +67,13 @@ get_choices <- function(datasets = NULL, max_results = NULL) {
   query_str <- build_dataset_query("choices", datasets, max_results)
   get_dataset_query(refbank(), query_str, max_results)
 }
+
+#' Get conditions
+#'
+#' @inheritParams get_messages
+#'
+#' @export
+get_conditions <- function(datasets = NULL, max_results = NULL) {
+  query_str <- build_dataset_query("conditions", datasets, max_results)
+  get_dataset_query(refbank(), query_str, max_results)
+}
