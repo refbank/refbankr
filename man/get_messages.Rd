@@ -4,7 +4,15 @@
 \alias{get_messages}
 \title{Get messages}
 \usage{
-get_messages(version = "current", datasets = NULL, max_results = NULL)
+get_messages(
+  version = "current",
+  datasets = NULL,
+  max_results = NULL,
+  include_trial_data = F,
+  include_player_data = F,
+  include_image_data = F,
+  include_condition_data = F
+)
 }
 \arguments{
 \item{version}{(Optional) Version of the dataset to reference (defaults to
