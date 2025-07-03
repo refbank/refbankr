@@ -55,7 +55,7 @@ get_datasets <- function(version = "current", max_results = NULL) {
 join_conditions_string <- "LEFT JOIN {table_keys['conditions']} USING (condition_id, dataset_id)"
 #join_conditions_string <- "LEFT JOIN {table_keys['conditions']} ON {table_keys['trials']}.condition_id = {table_keys['conditions']}.condition_id"
 
-join_images_string <- "LEFT JOIN {table_keys['images']} ON {table_keys['trials']}.target = {table_keys['images']}.image_id"
+join_images_string <- "LEFT JOIN {table_keys['images']} ON `trials:zkj2`.target = `images:jw0t`.image_id"
 
 join_players_string <- "LEFT JOIN {table_keys['players']} USING (player_id, dataset_id)"
 
