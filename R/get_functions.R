@@ -12,7 +12,7 @@ refbank <- function(version) {
 table_keys <- c("datasets"="datasets:q7yy", "messages"="messages:2q18",
                 "trials"="trials:zkj2", "choices"="choices:s1zj",
                 "conditions"="conditions:kk1e", "players"="players:7xnd",
-                "images"="images:jw0t"
+                "images"="images:jw0t", "image_files"="image_files:zkvc"
 )
 
 # run query on dataset and retrieve results
@@ -27,16 +27,16 @@ get_dataset_table <- function(dataset, table_name, max_results) {
 
 # build a SQL WHERE clause out of a variable and its allowed values
 build_filter <- function(var, vals) {
-  vals_str <- glue("'{vals}'") |> paste(collapse = ", ")
-  if (is.null(vals)) "" else glue("WHERE {var} IN ({vals_str})")
+  vals_str <- glue::glue("'{vals}'") |> paste(collapse = ", ")
+  if (is.null(vals)) "" else glue::glue("WHERE {var} IN ({vals_str})")
 }
 
 # build a SQL query that subsets a dataset table by a vector of dataset IDs
 build_dataset_query <- function(primary_table, aux_joins, datasets, max_results) {
-  if (!is.null(max_results)) {max_results_str= glue("LIMIT {max_results}")}
+  if (!is.null(max_results)) {max_results_str= glue::glue("LIMIT {max_results}")}
   else {max_results_str=""}
   dataset_filter <- build_filter(var = "dataset_id", vals = datasets)
-   glue("SELECT * FROM {table_keys[primary_table]} {aux_joins} {dataset_filter} {max_results_str}" ) |>
+   glue::glue("SELECT * FROM {table_keys[primary_table]} {aux_joins} {dataset_filter} {max_results_str}" ) |>
     stringr::str_trim()
 }
 
@@ -76,10 +76,10 @@ get_messages <- function(version = "current", datasets = NULL, max_results = NUL
   primary_table="messages"
   join_string <- ""
   if (include_image_data || include_condition_data) {include_trial_data=T}
-  if (include_trial_data) {join_string=stringr::str_c(join_string, glue(join_trials_string))}
-  if (include_player_data) {join_string=stringr::str_c(join_string, glue(join_players_string))}
-  if (include_image_data) {join_string=stringr::str_c(join_string, glue(join_images_string))}
-  if (include_condition_data) {join_string=stringr::str_c(join_string, glue(join_conditions_string))}
+  if (include_trial_data) {join_string=stringr::str_c(join_string, glue::glue(join_trials_string))}
+  if (include_player_data) {join_string=stringr::str_c(join_string, glue::glue(join_players_string))}
+  if (include_image_data) {join_string=stringr::str_c(join_string, glue::glue(join_images_string))}
+  if (include_condition_data) {join_string=stringr::str_c(join_string, glue::glue(join_conditions_string))}
   query_str <- build_dataset_query(primary_table, join_string, datasets, max_results)
   message(query_str)
   get_dataset_query(refbank(version), query_str, max_results)
@@ -96,8 +96,8 @@ get_trials <- function(version = "current", datasets = NULL, max_results = NULL,
                        include_condition_data=F) {
 
   join_string=""
-  if (include_image_data) {join_string=stringr::str_c(join_string, glue(join_images_string))}
-  if (include_condition_data) {join_string=stringr::str_c(join_string, glue(join_conditions_string))}
+  if (include_image_data) {join_string=stringr::str_c(join_string, glue::glue(join_images_string))}
+  if (include_condition_data) {join_string=stringr::str_c(join_string, glue::glue(join_conditions_string))}
   query_str <- build_dataset_query("trials", join_string,  datasets, max_results)
   message(query_str)
   get_dataset_query(refbank(version), query_str, max_results)
@@ -118,10 +118,10 @@ get_choices <- function(version = "current", datasets = NULL, max_results = NULL
   primary_table="choices"
   join_string=""
   if (include_image_data || include_condition_data) {include_trial_data=T}
-  if (include_trial_data) {join_string=stringr::str_c(join_string, glue(join_trials_string))}
-  if (include_player_data) {join_string=stringr::str_c(join_string, glue(join_players_string))}
-  if (include_image_data) {join_string=stringr::str_c(join_string, glue(join_images_string))}
-  if (include_condition_data) {join_string=stringr::str_c(join_string, glue(join_conditions_string))}
+  if (include_trial_data) {join_string=stringr::str_c(join_string, glue::glue(join_trials_string))}
+  if (include_player_data) {join_string=stringr::str_c(join_string, glue::glue(join_players_string))}
+  if (include_image_data) {join_string=stringr::str_c(join_string, glue::glue(join_images_string))}
+  if (include_condition_data) {join_string=stringr::str_c(join_string, glue::glue(join_conditions_string))}
   query_str <- build_dataset_query(primary_table, join_string, datasets, max_results)
   get_dataset_query(refbank(version), query_str, max_results)
 }
@@ -153,6 +153,47 @@ get_players <- function(version = "current", datasets = NULL, max_results = NULL
 #'
 #' @export
 get_images <- function(version = "current", datasets = NULL, max_results = NULL) {
-  query_str <- build_dataset_query("images","",  datasets, max_results)
-  get_dataset_query(refbank(version), query_str, max_results)
+  primary_table="images"
+  if (!is.null(max_results)) {max_results_str= glue::glue("LIMIT {max_results}")}
+  else {max_results_str=""}
+  dataset_filter <- build_filter(var = "dataset_id", vals = datasets)
+  cte_string <- "WITH unique_image_ids AS (
+  SELECT DISTINCT
+    dataset_id,
+    TRIM(image_id) AS image_id
+  FROM `trials:zkj2`
+  CROSS JOIN UNNEST(SPLIT(option_set, ';')) AS image_id)"
+  join_string="LEFT JOIN unique_image_ids USING (image_id)"
+   query_str <- glue::glue("{cte_string} SELECT * FROM {table_keys[primary_table]} {join_string} {dataset_filter} {max_results_str}" ) |>
+    stringr::str_trim()
+   message(query_str)
+   get_dataset_query(refbank(version), query_str, max_results)
 }
+
+#' Get images
+#'
+#' @inheritParams get_messages
+#' @param destination
+#'
+#' @export
+download_image_files <- function(version = "current", destination=NULL, datasets = NULL, max_results=NULL, overwrite=F) {
+  primary_table="image_files"
+  if (!is.null(max_results)) {max_results_str= glue::glue("LIMIT {max_results}")}
+  else {max_results_str=""}
+  dataset_filter <- build_filter(var = "dataset_id", vals = datasets)
+  cte_string <- "WITH unique_image_ids AS (
+  SELECT DISTINCT
+    dataset_id,
+    TRIM(image_id) AS image_id
+  FROM `trials:zkj2`
+  CROSS JOIN UNNEST(SPLIT(option_set, ';')) AS image_id
+)"
+  join_string_trials="LEFT JOIN unique_image_ids USING (image_id)"
+  join_string_image_labels="LEFT JOIN `images:jw0t` ON `image_files:zkvc`.file_name = `images:jw0t`.image_path"
+  query_str <- glue::glue("{cte_string} SELECT * FROM {table_keys[primary_table]} {join_string_image_labels}
+                             {join_string_trials} {dataset_filter} {max_results_str}" ) |>
+    stringr::str_trim()
+  message(query_str)
+  refbank(version)$query(query_str)$download_files(path=destination, overwrite, max_results=max_results)
+}
+
