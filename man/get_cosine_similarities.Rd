@@ -4,13 +4,13 @@
 \alias{get_cosine_similarities}
 \title{Get cosine similarities of sbert embeddings}
 \usage{
-get_cosine_similarities(datasets = NULL, type = NULL, max_results = NULL)
+get_cosine_similarities(datasets = NULL, sim_type = NULL, max_results = NULL)
 }
 \arguments{
 \item{datasets}{(Optional) Character vector of dataset IDs to include
 (default to all datasets).}
 
-\item{type}{(Optional) Character vector of which similarity comparisons to return
+\item{sim_type}{(Optional) Character vector of which similarity comparisons to return
 options are "to_last", "to_next", "to_first", "diverge", "diff", "idiosyncrasy"
 (default to all comparisons).}
 

@@ -6,7 +6,7 @@
 #' @export
 refbank <- function(version) {
   message(glue::glue("Using Refbank dataset version: {version}"))
-  redivis::redivis$user("mcfrank")$dataset("refbank", version = version)
+  redivis::redivis$user("mcfrank")$dataset("refbank:2zy7", version = version)
 }
 
 #' Reference to Refbank Redivis workflow for processed outputs
@@ -19,6 +19,15 @@ refbank_derived <- function() {
   version <- stringr::str_sub(source, 14,-1)
   message(glue::glue("The processed data corresponds to refbank version {version}."))
   workflow
+}
+
+
+#' Returns the version tag for the current version of refbank
+#'
+#'
+#' @export
+get_current_version <- function() {
+  refbank("current")$get()$properties$currentVersion$tag
 }
 
 
