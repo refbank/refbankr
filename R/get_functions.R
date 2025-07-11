@@ -9,11 +9,30 @@ refbank <- function(version) {
   redivis::redivis$user("mcfrank")$dataset("refbank", version = version)
 }
 
+#' Reference to Refbank Redivis workflow for processed outputs
+#'
+#'
+#' @export
+refbank_derived <- function() {
+  workflow <- redivis::redivis$user("alvinwmtan")$workflow("refbank-sbert:y7kz")
+  source<- workflow$list_datasources()[[1]]$properties$sourceDataset$scopedReference
+  version <- stringr::str_sub(source, 14,-1)
+  message(glue::glue("The processed data corresponds to refbank version {version}."))
+  workflow
+}
+
+
 table_keys <- c("datasets"="datasets:q7yy", "messages"="messages:2q18",
                 "trials"="trials:zkj2", "choices"="choices:s1zj",
                 "conditions"="conditions:kk1e", "players"="players:7xnd",
-                "images"="images:jw0t", "image_files"="image_files:zkvc"
+                "images"="images:jw0t", "image_files"="image_files:zkvc",
+                "embeddings"="embeddings_full:wn5k","sims"="embed_sims:har0"
 )
+
+join_conditions_string <- "LEFT JOIN {table_keys['conditions']} USING (condition_id, dataset_id)"
+join_images_string <- "LEFT JOIN {table_keys['images']} ON `trials:zkj2`.target = `images:jw0t`.image_id"
+join_players_string <- "LEFT JOIN {table_keys['players']} USING (player_id, dataset_id)"
+join_trials_string <- "LEFT JOIN {table_keys['trials']} USING (trial_id, dataset_id)"
 
 # run query on dataset and retrieve results
 get_dataset_query <- function(dataset, query_str, max_results) {
@@ -51,15 +70,6 @@ build_dataset_query <- function(primary_table, aux_joins, datasets, max_results)
 get_datasets <- function(version = "current", max_results = NULL) {
   get_dataset_table(refbank(version), "datasets:q7yy", max_results)
 }
-
-join_conditions_string <- "LEFT JOIN {table_keys['conditions']} USING (condition_id, dataset_id)"
-#join_conditions_string <- "LEFT JOIN {table_keys['conditions']} ON {table_keys['trials']}.condition_id = {table_keys['conditions']}.condition_id"
-
-join_images_string <- "LEFT JOIN {table_keys['images']} ON `trials:zkj2`.target = `images:jw0t`.image_id"
-
-join_players_string <- "LEFT JOIN {table_keys['players']} USING (player_id, dataset_id)"
-
-join_trials_string <- "LEFT JOIN {table_keys['trials']} USING (trial_id, dataset_id)"
 
 #' Get messages
 #'
@@ -170,10 +180,10 @@ get_images <- function(version = "current", datasets = NULL, max_results = NULL)
    get_dataset_query(refbank(version), query_str, max_results)
 }
 
-#' Get images
+#' Download image files
 #'
 #' @inheritParams get_messages
-#' @param destination
+#' @param destination directory to write files to, defaults to working directory
 #'
 #' @export
 download_image_files <- function(version = "current", destination=getwd(), datasets = NULL, max_results=NULL, overwrite=F) {
@@ -200,3 +210,46 @@ download_image_files <- function(version = "current", destination=getwd(), datas
   refbank(version)$query(query_str)$download_files(path=destination, overwrite, max_results=max_results)
 }
 
+
+#' Get sbert embeddings
+#'
+#' @inheritParams get_messages
+#'
+#' @export
+get_sbert_embeddings <- function(datasets = NULL, max_results = NULL) {
+
+  primary_table="embeddings"
+  join_string=""
+  query_str <- build_dataset_query(primary_table, join_string, datasets, max_results)
+  get_dataset_query(refbank_derived(), query_str, max_results) |>
+    dplyr::select(!starts_with("dim"), everything()) #put all the metadata first
+}
+
+
+
+#' Get cosine similarities of sbert embeddings
+#'
+#' @inheritParams get_messages
+#' @param sim_type (Optional) Character vector of which similarity comparisons to return
+#'    options are "to_last", "to_next", "to_first", "diverge", "diff", "idiosyncrasy"
+#'   (default to all comparisons).
+#' @export
+get_cosine_similarities <- function(datasets = NULL, sim_type=NULL, max_results = NULL) {
+
+  primary_table="sims"
+  if (is.null(datasets) || is.null(sim_type)){ # easy mode, one WHERE clause
+  type_filter <- build_filter(var = "sim_type", vals = sim_type)
+  query_str <- build_dataset_query(primary_table, type_filter, datasets, max_results)
+  }
+  else { #hard mode, need a conjoint WHERE clause
+    type_filter <- build_filter(var = "sim_type", vals = sim_type)
+    vals_str <- glue::glue("'{datasets}'") |> paste(collapse = ", ")
+    dataset_filter <- glue::glue("AND dataset_id IN ({vals_str})")
+    both_filter <- stringr::str_c(type_filter, " ", dataset_filter)
+    query_str <- build_dataset_query(primary_table, both_filter, NULL, max_results)
+  }
+  message(query_str)
+  get_dataset_query(refbank_derived(), query_str, max_results) |>
+    dplyr::select_if(function(x){!all(is.na(x))})
+  #depending on what types of sim comparisons are returned, some columns don't apply!
+}
