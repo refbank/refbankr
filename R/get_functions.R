@@ -212,10 +212,7 @@ download_image_files <- function(version = "current", destination=getwd(), datas
   query_str <- glue::glue("{cte_string} SELECT * FROM {table_keys[primary_table]} {join_string_image_labels}
                              {join_string_trials} {dataset_filter} {max_results_str}" ) |>
     stringr::str_trim()
-  query_str <- "SELECT * FROM image_files:zkvc"
   message(query_str)
-  #refbank(version)$query(query_str)$list_files()
-  #refbank(version)$table("image_files")$download_files(path=destination, overwrite, max_results=max_results)
   refbank(version)$query(query_str)$download_files(path=destination, overwrite, max_results=max_results)
 }
 
