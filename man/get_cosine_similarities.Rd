@@ -4,9 +4,17 @@
 \alias{get_cosine_similarities}
 \title{Get cosine similarities of sbert embeddings}
 \usage{
-get_cosine_similarities(datasets = NULL, sim_type = NULL, max_results = NULL)
+get_cosine_similarities(
+  version = "current",
+  datasets = NULL,
+  sim_type = NULL,
+  max_results = NULL
+)
 }
 \arguments{
+\item{version}{(Optional) Version of the dataset to reference (defaults to
+"current"), can also be "next" for unreleased versions.}
+
 \item{datasets}{(Optional) Character vector of dataset IDs to include
 (default to all datasets).}
 

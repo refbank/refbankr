@@ -9,19 +9,6 @@ refbank <- function(version) {
   redivis::redivis$user("mcfrank")$dataset("refbank:2zy7", version = version)
 }
 
-#' Reference to Refbank Redivis workflow for processed outputs
-#'
-#'
-#' @export
-refbank_derived <- function() {
-  workflow <- redivis::redivis$user("alvinwmtan")$workflow("refbank-sbert:y7kz")
-  source<- workflow$list_datasources()[[1]]$properties$sourceDataset$scopedReference
-  version <- stringr::str_sub(source, 14,-1)
-  message(glue::glue("The processed data corresponds to refbank version {version}."))
-  workflow
-}
-
-
 #' Returns the version tag for the current version of refbank
 #'
 #'
@@ -35,7 +22,7 @@ table_keys <- c("datasets"="datasets:q7yy", "messages"="messages:2q18",
                 "trials"="trials:zkj2", "choices"="choices:s1zj",
                 "conditions"="conditions:kk1e", "players"="players:7xnd",
                 "images"="images:jw0t", "image_files"="image_files:zkvc",
-                "embeddings"="embeddings_full:wn5k","sims"="embed_sims:har0"
+                "embeddings"="embeddings:ckdc", "similarities"="cosine_similarities:cp0s"
 )
 
 join_conditions_string <- "LEFT JOIN {table_keys['conditions']} USING (condition_id, dataset_id)"
@@ -222,12 +209,11 @@ download_image_files <- function(version = "current", destination=getwd(), datas
 #' @inheritParams get_messages
 #'
 #' @export
-get_sbert_embeddings <- function(datasets = NULL, max_results = NULL) {
-
+get_sbert_embeddings <- function(version="current", datasets = NULL, max_results = NULL) {
   primary_table="embeddings"
   join_string=""
   query_str <- build_dataset_query(primary_table, join_string, datasets, max_results)
-  get_dataset_query(refbank_derived(), query_str, max_results) |>
+  get_dataset_query(refbank(version), query_str, max_results) |>
     dplyr::select(!starts_with("dim"), everything()) #put all the metadata first
 }
 
@@ -240,9 +226,9 @@ get_sbert_embeddings <- function(datasets = NULL, max_results = NULL) {
 #'    options are "to_last", "to_next", "to_first", "diverge", "diff", "idiosyncrasy"
 #'   (default to all comparisons).
 #' @export
-get_cosine_similarities <- function(datasets = NULL, sim_type=NULL, max_results = NULL) {
+get_cosine_similarities <- function(version="current", datasets = NULL, sim_type=NULL, max_results = NULL) {
 
-  primary_table="sims"
+  primary_table="similarities"
   if (is.null(datasets) || is.null(sim_type)){ # easy mode, one WHERE clause
   type_filter <- build_filter(var = "sim_type", vals = sim_type)
   query_str <- build_dataset_query(primary_table, type_filter, datasets, max_results)
@@ -255,7 +241,7 @@ get_cosine_similarities <- function(datasets = NULL, sim_type=NULL, max_results 
     query_str <- build_dataset_query(primary_table, both_filter, NULL, max_results)
   }
   message(query_str)
-  get_dataset_query(refbank_derived(), query_str, max_results) |>
-    dplyr::select_if(function(x){!all(is.na(x))})
+  get_dataset_query(refbank(version), query_str, max_results) |>
+    dplyr::select_if(function(x){!all(is.na(x))}) |> dplyr::select(sim_type, everything())
   #depending on what types of sim comparisons are returned, some columns don't apply!
 }

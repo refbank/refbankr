@@ -4,9 +4,12 @@
 \alias{get_sbert_embeddings}
 \title{Get sbert embeddings}
 \usage{
-get_sbert_embeddings(datasets = NULL, max_results = NULL)
+get_sbert_embeddings(version = "current", datasets = NULL, max_results = NULL)
 }
 \arguments{
+\item{version}{(Optional) Version of the dataset to reference (defaults to
+"current"), can also be "next" for unreleased versions.}
+
 \item{datasets}{(Optional) Character vector of dataset IDs to include
 (default to all datasets).}
 
