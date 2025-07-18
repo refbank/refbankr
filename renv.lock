@@ -1097,7 +1097,7 @@
     },
     "redivis": {
       "Package": "redivis",
-      "Version": "0.11.1",
+      "Version": "0.11.2",
       "Source": "GitHub",
       "Type": "Package",
       "Title": "R interface for Redivis",
@@ -1138,7 +1138,7 @@
       "RemoteRepo": "redivis-r",
       "RemoteUsername": "redivis",
       "RemoteRef": "HEAD",
-      "RemoteSha": "3efda1480a51e38e567b48b9e4f64c1fb9640e54",
+      "RemoteSha": "f5d85bfb579f0ce0706c86e38b22e521dd932f2b",
       "NeedsCompilation": "no"
     },
     "renv": {

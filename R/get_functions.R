@@ -87,7 +87,7 @@ get_messages <- function(version = "current", datasets = NULL, max_results = NUL
   if (include_image_data) {join_string=stringr::str_c(join_string, glue::glue(join_images_string))}
   if (include_condition_data) {join_string=stringr::str_c(join_string, glue::glue(join_conditions_string))}
   query_str <- build_dataset_query(primary_table, join_string, datasets, max_results)
-  message(query_str)
+  #message(query_str)
   get_dataset_query(refbank(version), query_str, max_results)
 }
 
@@ -105,7 +105,7 @@ get_trials <- function(version = "current", datasets = NULL, max_results = NULL,
   if (include_image_data) {join_string=stringr::str_c(join_string, glue::glue(join_images_string))}
   if (include_condition_data) {join_string=stringr::str_c(join_string, glue::glue(join_conditions_string))}
   query_str <- build_dataset_query("trials", join_string,  datasets, max_results)
-  message(query_str)
+  #message(query_str)
   get_dataset_query(refbank(version), query_str, max_results)
 }
 
@@ -172,7 +172,7 @@ get_images <- function(version = "current", datasets = NULL, max_results = NULL)
   join_string="LEFT JOIN unique_image_ids USING (image_id)"
    query_str <- glue::glue("{cte_string} SELECT * FROM {table_keys[primary_table]} {join_string} {dataset_filter} {max_results_str}" ) |>
     stringr::str_trim()
-   message(query_str)
+   #message(query_str)
    get_dataset_query(refbank(version), query_str, max_results)
 }
 
@@ -189,7 +189,6 @@ download_image_files <- function(version = "current", destination=getwd(), datas
   dataset_filter <- build_filter(var = "dataset_id", vals = datasets)
   cte_string <- "WITH unique_image_ids AS (
   SELECT DISTINCT
-    dataset_id,
     TRIM(image_id) AS image_id
   FROM `trials:zkj2`
   CROSS JOIN UNNEST(SPLIT(option_set, ';')) AS image_id
@@ -199,7 +198,8 @@ download_image_files <- function(version = "current", destination=getwd(), datas
   query_str <- glue::glue("{cte_string} SELECT * FROM {table_keys[primary_table]} {join_string_image_labels}
                              {join_string_trials} {dataset_filter} {max_results_str}" ) |>
     stringr::str_trim()
-  message(query_str)
+  #message(query_str)
+  #refbank(version)$query(query_str)$to_tibble()
   refbank(version)$query(query_str)$download_files(path=destination, overwrite, max_results=max_results)
 }
 
@@ -240,7 +240,7 @@ get_cosine_similarities <- function(version="current", datasets = NULL, sim_type
     both_filter <- stringr::str_c(type_filter, " ", dataset_filter)
     query_str <- build_dataset_query(primary_table, both_filter, NULL, max_results)
   }
-  message(query_str)
+  #message(query_str)
   get_dataset_query(refbank(version), query_str, max_results) |>
     dplyr::select_if(function(x){!all(is.na(x))}) |> dplyr::select(sim_type, everything())
   #depending on what types of sim comparisons are returned, some columns don't apply!
