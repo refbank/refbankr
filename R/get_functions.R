@@ -22,7 +22,8 @@ table_keys <- c("datasets"="datasets:q7yy", "messages"="messages:2q18",
                 "trials"="trials:zkj2", "choices"="choices:s1zj",
                 "conditions"="conditions:kk1e", "players"="players:7xnd",
                 "images"="images:jw0t", "image_files"="image_files:zkvc",
-                "embeddings"="embeddings:ckdc", "similarities"="cosine_similarities:cp0s"
+                "embeddings"="embeddings:ckdc", "similarities"="cosine_similarities:cp0s",
+                "summary"="summary:w9sc", "per_game_summary"="per_game_summary:bsw0"
 )
 
 join_conditions_string <- "LEFT JOIN {table_keys['conditions']} USING (condition_id, dataset_id)"
