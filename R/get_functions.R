@@ -245,3 +245,28 @@ get_cosine_similarities <- function(version="current", datasets = NULL, sim_type
     dplyr::select_if(function(x){!all(is.na(x))}) |> dplyr::select(sim_type, everything())
   #depending on what types of sim comparisons are returned, some columns don't apply!
 }
+
+#' Get the per_game summary stats
+#'
+#' @inheritParams get_messages
+#' @export
+get_per_game_summary <- function(version="current", datasets = NULL, max_results = NULL) {
+
+  primary_table="per_game_summary"
+  join_string=""
+  query_str <- build_dataset_query(primary_table, join_string, datasets, max_results)
+  get_dataset_query(refbank(version), query_str, max_results)
+}
+
+#' Get the per_dataset/condition summary of amount of data
+#'
+#' @inheritParams get_messages
+#' @export
+get_dataset_summary <- function(version="current", datasets = NULL, max_results = NULL) {
+
+  primary_table="summary"
+  join_string=""
+  query_str <- build_dataset_query(primary_table, join_string, datasets, max_results)
+  get_dataset_query(refbank(version), query_str, max_results)
+}
+
