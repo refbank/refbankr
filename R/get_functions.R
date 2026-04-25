@@ -23,7 +23,8 @@ table_keys <- c("datasets"="datasets:q7yy", "messages"="messages:2q18",
                 "conditions"="conditions:kk1e", "players"="players:7xnd",
                 "images"="images:jw0t", "image_files"="image_files:zkvc",
                 "embeddings"="embeddings:ckdc", "similarities"="cosine_similarities:cp0s",
-                "summary"="summary:w9sc", "per_game_summary"="per_game_summary:bsw0"
+                "summary"="summary:w9sc", "per_game_summary"="per_game_summary:bsw0",
+                "annotations"="annotations:4j5y", "parsed"="parsed:07sw"
 )
 
 join_conditions_string <- "LEFT JOIN {table_keys['conditions']} USING (condition_id, dataset_id)"
@@ -271,3 +272,26 @@ get_dataset_summary <- function(version="current", datasets = NULL, max_results 
   get_dataset_query(refbank(version), query_str, max_results)
 }
 
+#' Get stanza parsed output
+#'
+#' @inheritParams get_messages
+#'
+#' @export
+get_parsed_messages <- function(version="current", datasets = NULL, max_results = NULL) {
+  primary_table="parsed"
+  join_string=""
+  query_str <- build_dataset_query(primary_table, join_string, datasets, max_results)
+  get_dataset_query(refbank(version), query_str, max_results)
+}
+
+#' Get message annotations
+#'
+#' @inheritParams get_messages
+#'
+#' @export
+get_annotated_messages <- function(version="current", datasets = NULL, max_results = NULL) {
+  primary_table="annotations"
+  join_string=""
+  query_str <- build_dataset_query(primary_table, join_string, datasets, max_results)
+  get_dataset_query(refbank(version), query_str, max_results)
+}
