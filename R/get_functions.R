@@ -6,7 +6,7 @@
 #' @export
 refbank <- function(version) {
   message(glue::glue("Using Refbank dataset version: {version}"))
-  redivis::redivis$user("mcfrank")$dataset("refbank:2zy7", version = version)
+  redivis::redivis$organization("datapages")$dataset("refbank:2zy7", version = version)
 }
 
 #' Returns the version tag for the current version of refbank
