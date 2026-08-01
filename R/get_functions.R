@@ -19,7 +19,7 @@ get_current_version <- function() {
 
 
 table_keys <- c("datasets"="datasets:q7yy", "messages"="messages:2q18",
-                "trials"="trials:zkj2", "choices"="choices:s1zj",
+                "trials"="trials:zkj2", "selections"="selections:s1zj",
                 "conditions"="conditions:kk1e", "players"="players:7xnd",
                 "images"="images:jw0t", "image_files"="image_files:zkvc",
                 "embeddings"="embeddings:ckdc", "similarities"="cosine_similarities:cp0s",
@@ -28,7 +28,7 @@ table_keys <- c("datasets"="datasets:q7yy", "messages"="messages:2q18",
 )
 
 join_conditions_string <- "LEFT JOIN {table_keys['conditions']} USING (condition_id, dataset_id)"
-join_images_string <- "LEFT JOIN {table_keys['images']} ON `trials:zkj2`.target = `images:jw0t`.image_id"
+join_images_string <- "LEFT JOIN {table_keys['images']} ON `trials:zkj2`.target_image = `images:jw0t`.image_id"
 join_players_string <- "LEFT JOIN {table_keys['players']} USING (player_id, dataset_id)"
 join_trials_string <- "LEFT JOIN {table_keys['trials']} USING (trial_id, dataset_id)"
 
@@ -112,18 +112,18 @@ get_trials <- function(version = "current", datasets = NULL, max_results = NULL,
 }
 
 
-#' Get choices
+#' Get selections
 #'
 #' @inheritParams get_messages
 #'
 #' @export
-get_choices <- function(version = "current", datasets = NULL, max_results = NULL,
+get_selections <- function(version = "current", datasets = NULL, max_results = NULL,
                         include_trial_data=F,
                         include_player_data=F,
                         include_image_data=F,
                         include_condition_data=F) {
 
-  primary_table="choices"
+  primary_table="selections"
   join_string=""
   if (include_image_data || include_condition_data) {include_trial_data=T}
   if (include_trial_data) {join_string=stringr::str_c(join_string, glue::glue(join_trials_string))}
@@ -170,7 +170,7 @@ get_images <- function(version = "current", datasets = NULL, max_results = NULL)
     dataset_id,
     TRIM(image_id) AS image_id
   FROM `trials:zkj2`
-  CROSS JOIN UNNEST(SPLIT(option_set, ';')) AS image_id)"
+  CROSS JOIN UNNEST(SPLIT(image_options, ';')) AS image_id)"
   join_string="LEFT JOIN unique_image_ids USING (image_id)"
    query_str <- glue::glue("{cte_string} SELECT * FROM {table_keys[primary_table]} {join_string} {dataset_filter} {max_results_str}" ) |>
     stringr::str_trim()
@@ -193,7 +193,7 @@ download_image_files <- function(version = "current", destination=getwd(), datas
   SELECT DISTINCT
     TRIM(image_id) AS image_id
   FROM `trials:zkj2`
-  CROSS JOIN UNNEST(SPLIT(option_set, ';')) AS image_id
+  CROSS JOIN UNNEST(SPLIT(image_options, ';')) AS image_id
 )"
   join_string_trials="LEFT JOIN unique_image_ids USING (image_id)"
   join_string_image_labels="LEFT JOIN `images:jw0t` ON `image_files:zkvc`.file_name = `images:jw0t`.image_path"

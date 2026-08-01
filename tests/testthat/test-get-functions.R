@@ -19,9 +19,9 @@ test_that("get_trials returns a non-empty tibble", {
   expect_gt(nrow(result), 0)
 })
 
-test_that("get_choices returns a non-empty tibble", {
+test_that("get_selections returns a non-empty tibble", {
   ensure_redivis_auth()
-  result <- get_choices(max_results = 5)
+  result <- get_selections(max_results = 5)
   expect_true(is.data.frame(result))
   expect_gt(nrow(result), 0)
 })

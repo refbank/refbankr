@@ -11,5 +11,10 @@ Package for downloading data from refbank repository of reference game data.
 \author{
 \strong{Maintainer}: Michael Frank \email{mcfrank@stanford.edu}
 
+Authors:
+\itemize{
+  \item Michael Frank \email{mcfrank@stanford.edu}
+}
+
 }
 \keyword{internal}

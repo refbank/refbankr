@@ -2,7 +2,7 @@ table_function_map <- c(
   "datasets"            = "get_datasets",
   "messages"            = "get_messages",
   "trials"              = "get_trials",
-  "choices"             = "get_choices",
+  "selections"          = "get_selections",
   "conditions"          = "get_conditions",
   "players"             = "get_players",
   "images"              = "get_images",
