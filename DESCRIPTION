@@ -7,12 +7,15 @@ Description: Package for downloading data from refbank repository of reference g
 License: GPL (>= 3) + file LICENSE
 Encoding: UTF-8
 Imports:
+    dplyr,
     glue,
     redivis,
-    stringr
+    stringr,
+    tidyr
 Suggests:
     R.utils,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    tibble
 Config/testthat/edition: 3
 Remotes:
     redivis=redivis/redivis-r
